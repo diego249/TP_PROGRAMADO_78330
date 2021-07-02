@@ -2,7 +2,7 @@
 
 {% load crispy_forms_tags %}
 
-{% block title %}Tp5{% endblock %}
+{% block title %}Ejercicio 59{% endblock %}
 
 {% block content %}
 
@@ -25,20 +25,74 @@
 
 {% if form %}
 
-    <div class="container">
-        <!-- Parametros de entrada -->
-            <form class="bg-light mr-5" method="POST" enctype='multipart/form-data'>
-                {% csrf_token %}
-                {% crispy form form.helper %}
-                <!-- Boton Simular -->
-                <div class="row justify-content-center mb-3">
-                    <input type="submit" class="btn btn-primary" value="Simular">
-                </div>
-            </form>
-    </div>
-
+<div class="container">
+    <!-- Parametros de entrada -->
+    <form class="bg-light mr-5" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+        {% crispy form form.helper %}
+        <!-- Boton Simular -->
+        <div class="row justify-content-center mb-3">
+            <input type="submit" class="btn btn-primary" value="Simular">
+        </div>
+    </form>
+</div>
 
 {% else %}
+
+<div class="container mt-5">
+    <!-- Tabla de resutados de simulacion y Paginador-->
+    <div class="index-header ">
+        <h5>Tabla de intervalo de simulación</h5>
+    </div>
+    <div class="mt-3 text-center">
+        <table class="table table-fixed table-bordered table-hover">
+            <thead class="thead-dark table-bordered">
+                <tr class="table-active" >
+
+                    <th>Evento</th>
+                    <th>Reloj</th>
+                    <th>Proxima llegada</th>
+                    <th>Fin asignacion</th>
+                    <th>RND turno</th>
+                    <th>Tiempo turno</th>
+                    <th>Costo turno</th>
+                    <th>Terminal 1</th>
+                    <th>Terminal 2</th>
+                    <th>Terminal 3</th>
+                    <th>Fin cobro</th>
+                    <th>RND pedido</th>
+                    <th>Fin entrega pedido</th>
+                    <th>Costo pedido</th>
+                    <th>RND Impresion</th>
+                    <th>Entrega impresion</th>
+                    <th>Costo impresion</th>
+                    <th>Ac clientes completados</th>
+                    <th>Ac costo</th>
+                    <th>Promedio costo</th>
+                    <th>Estado</th>
+                    <th>Cola</th>
+                    <th>Cola Asignacion</th>
+                    <th>Estado</th>
+                    <th>Disponible</th>
+                    <th>Estado</th>
+                    <th>Cola</th>
+                    <th>Estado</th>
+                    <th>Cola</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in matrizResultado %}
+                    <tr>
+                        {% for registro in fila %}
+                            <td>{{ registro }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- <span class="label label-default font-weight-bold">Registros: {{RegistrosTotal}}</span> -->
+    </div>
+</div>
 
 {% endif %}
 
