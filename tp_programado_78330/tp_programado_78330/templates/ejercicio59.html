@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Tp5{% endblock %}
+
+{% block content %}
+
+<head>
+     <style type="text/css">
+        .table-responsive {
+            height:200px;
+            overflow:scroll;
+        }
+
+        thead tr:nth-child(1) th { position: sticky; top: 0; }
+        thead tr:nth-child(2) th { position: sticky; top: 0; }
+     </style>
+
+</head>
+
+<div class="index-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">EJERCICIO 59</h1>
+</div>
+
+{% if form %}
+
+    <div class="container">
+        <!-- Parametros de entrada -->
+            <form class="bg-light mr-5" method="POST" enctype='multipart/form-data'>
+                {% csrf_token %}
+                {% crispy form form.helper %}
+                <!-- Boton Simular -->
+                <div class="row justify-content-center mb-3">
+                    <input type="submit" class="btn btn-primary" value="Simular">
+                </div>
+            </form>
+    </div>
+
+
+{% else %}
+
+{% endif %}
+
+{% endblock %}
