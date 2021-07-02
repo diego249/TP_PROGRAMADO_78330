@@ -48,36 +48,36 @@
         <table class="table table-fixed table-bordered table-hover">
             <thead class="thead-dark table-bordered">
                 <tr class="table-active" >
-
                     <th>Evento</th>
                     <th>Reloj</th>
                     <th>Proxima llegada</th>
                     <th>Fin asignacion</th>
-                    <th>RND turno</th>
+                    <th>Estado Encargado</th>
+                    <th>Cola Encargado</th>
+                    <th>Cola Asig Encargado</th>
                     <th>Tiempo turno</th>
-                    <th>Costo turno</th>
-                    <th>Terminal 1</th>
-                    <th>Terminal 2</th>
-                    <th>Terminal 3</th>
-                    <th>Fin cobro</th>
-                    <th>RND pedido</th>
-                    <th>Fin entrega pedido</th>
-                    <th>Costo pedido</th>
-                    <th>RND Impresion</th>
-                    <th>Entrega impresion</th>
-                    <th>Costo impresion</th>
-                    <th>Ac clientes completados</th>
-                    <th>Ac costo</th>
-                    <th>Promedio costo</th>
-                    <th>Estado</th>
-                    <th>Cola</th>
-                    <th>Cola Asignacion</th>
-                    <th>Estado</th>
-                    <th>Disponible</th>
-                    <th>Estado</th>
-                    <th>Cola</th>
-                    <th>Estado</th>
-                    <th>Cola</th>
+                    <th>Importe turno</th>
+                    <th>T1 Estado</th>
+                    <th>T1 Liberacion</th>
+                    <th>T2 Estado</th>
+                    <th>T2 Liberacion</th>
+                    <th>T3 Estado</th>
+                    <th>T3 Liberacion</th>
+                    <th>Mozo Estado</th>
+                    <th>Fin pedido</th>
+                    <th>Impresora Estado</th>
+                    <th>Fin impresion</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    {% for col in clientes %}
+                        <th>Estado</th>
+                        <th>Gasto</th>
+                        <th>Estado</th>
+                        <th>Estado</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
