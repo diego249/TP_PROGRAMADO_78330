@@ -101,27 +101,45 @@ class simulacion(generic.FormView):
 
             if reloj <= relojFin and reloj >= relojInicio:
                 matriz[-1][0] = evento
-                matriz[-1][1] = reloj
+                matriz[-1][1] = round(reloj, 4)
                 matriz[-1][2] = proxima_llegada
-                matriz[-1][3] = encargado.fin_asignacion
+                if encargado.fin_asignacion != '':
+                    matriz[-1][3] = round(encargado.fin_asignacion, 4)
+                else:
+                    matriz[-1][3] = encargado.fin_asignacion
                 matriz[-1][4] = encargado.estado
                 matriz[-1][5] = encargado.cola
                 matriz[-1][6] = encargado.cola_asig
                 matriz[-1][7] = encargado.tiempo_turno
                 matriz[-1][8] = encargado.importe
                 matriz[-1][9] = terminal1.estado
-                matriz[-1][10] = terminal1.tiempo_liberacion
+                if terminal1.tiempo_liberacion != '':
+                    matriz[-1][10] = round(terminal1.tiempo_liberacion, 4)
+                else:
+                    matriz[-1][10] = terminal1.tiempo_liberacion
                 matriz[-1][11] = terminal2.estado
-                matriz[-1][12] = terminal2.tiempo_liberacion
+                if terminal2.tiempo_liberacion != '':
+                    matriz[-1][12] = round(terminal2.tiempo_liberacion, 4)
+                else:
+                    matriz[-1][12] = terminal2.tiempo_liberacion
                 matriz[-1][13] = terminal3.estado
-                matriz[-1][14] = terminal3.tiempo_liberacion
+                if terminal3.tiempo_liberacion != '':
+                    matriz[-1][14] = round(terminal3.tiempo_liberacion, 4)
+                else:
+                    matriz[-1][14] = terminal3.tiempo_liberacion
                 matriz[-1][15] = mozo.estado
-                matriz[-1][16] = mozo.fin_entrega
+                if mozo.fin_entrega != '':
+                    matriz[-1][16] = round(mozo.fin_entrega, 4)
+                else:
+                    matriz[-1][16] = mozo.fin_entrega
                 matriz[-1][17] = impresora.estado
-                matriz[-1][18] = impresora.fin_impresion
+                if impresora.fin_impresion != '':
+                    matriz[-1][18] = round(impresora.fin_impresion, 4)
+                else:
+                    matriz[-1][18] = impresora.fin_impresion
                 matriz[-1][19] = clientes_completados
                 matriz[-1][20] = ac_costo
-                matriz[-1][21] = promedio
+                matriz[-1][21] = round(promedio, 4)
                 for i in range(id_cliente):
                     matriz[-1][22 + (i * 4)] = clientes[i].estado
                     matriz[-1][23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
