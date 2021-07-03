@@ -18,7 +18,7 @@ class simulacion(generic.FormView):
         relojFin = form.cleaned_data['min_fin']
         relojInicio = form.cleaned_data['min_inicio']
 
-        matriz = [[''] * 29 for f in range(1)]
+        matriz = [[''] * 26 for f in range(1)]
         reloj = 0
         proxima_llegada = 0
         eventos = ["Inicialización", "Llegada Cliente", "Fin Asignacion", "Fin Entrega Pedido", "Fin Turno", "Fin Impresion", "Fin Cobro"]
@@ -67,7 +67,7 @@ class simulacion(generic.FormView):
                 id_cliente += 1
                 clientes.append(clases.Cliente(id_cliente, encargado, mozo, impresora))
 
-                matriz_cliente = [[''] * 5 for f in range(len(matriz))]
+                matriz_cliente = [[''] * 4 for f in range(len(matriz))]
                 matriz = np.hstack((matriz, matriz_cliente))
                 for cliente in clientes:
                     cliente.ejecutar(reloj)
@@ -92,6 +92,9 @@ class simulacion(generic.FormView):
                 elif cobro_cliente:
                     evento = eventos[6]
                     cobro_cliente = False
+                    clientes_completados += 1
+                    promedio = ac_costo / clientes_completados
+
 
                 for cliente in clientes:
                     cliente.ejecutar(reloj)
@@ -116,18 +119,15 @@ class simulacion(generic.FormView):
                 matriz[-1][16] = mozo.fin_entrega
                 matriz[-1][17] = impresora.estado
                 matriz[-1][18] = impresora.fin_impresion
-
-                matriz[-1][19] = 0
-                matriz[-1][20] = 0
-                matriz[-1][21] = 0
-                matriz[-1][22] = 0
-                matriz[-1][23] = 0
+                matriz[-1][19] = clientes_completados
+                matriz[-1][20] = ac_costo
+                matriz[-1][21] = promedio
                 for i in range(id_cliente):
-                    matriz[-1][24 + (i * 5)] = clientes[i].estado
-                    matriz[-1][25 + (i * 5)] = '$' + str(clientes[i].gasto_individual)
-                    matriz[-1][26 + (i * 5)] = clientes[i].nro_terminal
-                    matriz[-1][27 + (i * 5)] = clientes[i].en_cola_asig
-                    matriz[-1][28 + (i * 5)] = clientes[i].tiempo_asignacion
+                    matriz[-1][22 + (i * 4)] = clientes[i].estado
+                    matriz[-1][23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
+                    matriz[-1][24 + (i * 4)] = clientes[i].nro_terminal
+                    matriz[-1][25 + (i * 4)] = clientes[i].tiempo_llegada
+                    #matriz[-1][26 + (i * 5)] = clientes[i].tiempo_llegada
 
                 vector_temporal = [''] * len(matriz[0])
                 matriz = np.vstack([matriz, vector_temporal])
@@ -147,7 +147,6 @@ class simulacion(generic.FormView):
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_asignacion
 
-
                 if cliente.tiempo_fin_turno != '':
                     if cliente.tiempo_fin_turno < temporal_tiempo and cliente.estado == "ET":
                         llegada_cliente = False
@@ -157,7 +156,6 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_fin_turno
-
 
                 if cliente.tiempo_entrega_pedido != '':
                     if cliente.tiempo_entrega_pedido < temporal_tiempo and cliente.estado == "ET":
@@ -169,7 +167,6 @@ class simulacion(generic.FormView):
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_entrega_pedido
 
-
                 if cliente.tiempo_fin_impresion != '':
                     if cliente.tiempo_fin_impresion < temporal_tiempo and cliente.estado == "SI":
                         llegada_cliente = False
@@ -180,7 +177,6 @@ class simulacion(generic.FormView):
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_fin_impresion
 
-
                 if cliente.tiempo_fin_cobro != '':
                     if cliente.tiempo_fin_cobro < temporal_tiempo and cliente.estado == "SC":
                         llegada_cliente = False
@@ -190,8 +186,8 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = True
                         temporal_tiempo = cliente.tiempo_fin_cobro
-
+                        ac_costo += cliente.gasto_individual
 
             reloj = temporal_tiempo
 
-        return render(self.request, self.template_name, {"matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin]})
+        return render(self.request, self.template_name, {"matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin], "clientes": clientes})

@@ -168,7 +168,7 @@ class Cliente:
 
     def buscar_impresion(self):
         aleatorio = random.random()
-        if aleatorio < 0.9:
+        if aleatorio < 0.1:
             return True
         else:
             return False
@@ -191,12 +191,13 @@ class Cliente:
                 self.tiempo_llegada = reloj
 
             tiempo_asignacion2 = reloj + 0.33
-            if self.en_cola_asig == False and (tiempo_asignacion2 == self.encargado.terminal1.tiempo_liberacion or
+            if (tiempo_asignacion2 == self.encargado.terminal1.tiempo_liberacion or
                 tiempo_asignacion2 == self.encargado.terminal2.tiempo_liberacion or
                 tiempo_asignacion2 == self.encargado.terminal3.tiempo_liberacion):
                 self.estado = 'EA'
+                if self.en_cola_asig == False:
+                    self.encargado.cola_asig += 1
                 self.en_cola_asig = True
-                self.encargado.cola_asig += 1
                 tiempo_asignacion2 = ''
                 return
 
