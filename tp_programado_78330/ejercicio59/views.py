@@ -33,6 +33,8 @@ class simulacion(generic.FormView):
         id_cliente = 0
         clientes = []
 
+        bandera = False
+
         #servidores
         estados_encargado = ['Libre', 'Ocupado']
         estados_terminales = ['Libre', 'Disponible', 'Ocupado']
@@ -67,35 +69,29 @@ class simulacion(generic.FormView):
                 for cliente in clientes:
                     cliente.ejecutar(reloj)
 
-            elif asignacion_cliente:
-                evento = eventos[2]
-                for cliente in clientes:
-                    cliente.ejecutar(reloj)
-                asignacion_cliente = False
+            else:
+                if asignacion_cliente:
+                    evento = eventos[2]
+                    asignacion_cliente = False
 
-            elif pedido_cliente:
-                evento = eventos[3]
-                for cliente in clientes:
-                    cliente.ejecutar(reloj)
-                pedido_cliente = False
+                elif pedido_cliente:
+                    evento = eventos[3]
+                    pedido_cliente = False
 
-            elif fin_turno_cliente:
-                evento = eventos[4]
-                for cliente in clientes:
-                    cliente.ejecutar(reloj)
-                fin_turno_cliente = False
+                elif fin_turno_cliente:
+                    evento = eventos[4]
+                    fin_turno_cliente = False
 
-            elif impresion_cliente:
-                evento = eventos[5]
-                for cliente in clientes:
-                    cliente.ejecutar(reloj)
-                impresion_cliente = False
+                elif impresion_cliente:
+                    evento = eventos[5]
+                    impresion_cliente = False
 
-            elif cobro_cliente:
-                evento = eventos[6]
+                elif cobro_cliente:
+                    evento = eventos[6]
+                    cobro_cliente = False
+
                 for cliente in clientes:
                     cliente.ejecutar(reloj)
-                cobro_cliente = False
 
             if reloj <= relojFin and reloj >= relojInicio:
                 matriz[-1][0] = evento
@@ -127,8 +123,8 @@ class simulacion(generic.FormView):
                     matriz[-1][24 + (i * 5)] = clientes[i].estado
                     matriz[-1][25 + (i * 5)] = clientes[i].gasto_individual
                     matriz[-1][26 + (i * 5)] = clientes[i].nro_terminal
-                    matriz[-1][27 + (i * 5)] = 'VACIO'
-                    matriz[-1][28 + (i * 5)] = 'VACIO'
+                    matriz[-1][27 + (i * 5)] = clientes[i].tiempo_asignacion
+                    matriz[-1][28 + (i * 5)] = clientes[i].tiempo_fin_turno
 
                 vector_temporal = [''] * len(matriz[0])
                 matriz = np.vstack([matriz, vector_temporal])
@@ -138,7 +134,6 @@ class simulacion(generic.FormView):
             llegada_cliente = True
 
             for cliente in clientes:
-
                 if cliente.tiempo_asignacion != '':
                     if cliente.tiempo_asignacion < temporal_tiempo and cliente.estado == "SA":
                         llegada_cliente = False
@@ -151,7 +146,7 @@ class simulacion(generic.FormView):
                         break
 
                 if cliente.tiempo_fin_turno != '':
-                    if cliente.tiempo_fin_turno < temporal_tiempo and cliente.estado == "FT":
+                    if cliente.tiempo_fin_turno < temporal_tiempo and cliente.estado == "ET":
                         llegada_cliente = False
                         asignacion_cliente = False
                         pedido_cliente = False

@@ -158,14 +158,14 @@ class Cliente:
 
     def realizar_pedido(self):
         aleatorio = random.random()
-        if aleatorio < 0.5:
+        if aleatorio < 0.01:
             return True
         else:
             return False
 
     def buscar_impresion(self):
         aleatorio = random.random()
-        if aleatorio < 0.5:
+        if aleatorio < 0.1:
             return True
         else:
             return False
@@ -242,7 +242,6 @@ class Cliente:
             self.terminal_asignada.aumentardisponible()
             self.terminal_asignada.tiempo_liberacion = ''
             self.tiempo_fin_turno = ''
-            self.estado = 'FT'
 
             self.impresion = self.buscar_impresion()
             if self.impresion and self.impresora.estado == 'Libre':
@@ -263,8 +262,8 @@ class Cliente:
                 paga = self.encargado.asignar_cobro()
 
                 if paga:
-                    self.tiempo_fin_cobro = reloj + 0.5
                     self.estado = 'SC'
+                    self.tiempo_fin_cobro = reloj + 0.5
                     self.en_cola = False
                     return
                 else:
@@ -298,7 +297,7 @@ class Cliente:
             self.estado = 'D'
             return
 
-        elif self.en_cola:
+        if self.en_cola:
             paga = self.encargado.asignar_cobro()
 
             if paga:
@@ -310,6 +309,8 @@ class Cliente:
                 self.estado = 'EC'
                 self.en_cola = True
                 return
+
+
 
 
 
