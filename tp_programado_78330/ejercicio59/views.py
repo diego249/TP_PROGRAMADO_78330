@@ -190,4 +190,34 @@ class simulacion(generic.FormView):
 
             reloj = temporal_tiempo
 
-        return render(self.request, self.template_name, {"matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin], "clientes": clientes})
+            vector_resultado = [''] * len(matriz[0])
+
+            vector_resultado[0] = evento
+            vector_resultado[1] = reloj
+            vector_resultado[2] = proxima_llegada
+            vector_resultado[3] = encargado.fin_asignacion
+            vector_resultado[4] = encargado.estado
+            vector_resultado[5] = encargado.cola
+            vector_resultado[6] = encargado.cola_asig
+            vector_resultado[7] = encargado.tiempo_turno
+            vector_resultado[8] = encargado.importe
+            vector_resultado[9] = terminal1.estado
+            vector_resultado[10] = terminal1.tiempo_liberacion
+            vector_resultado[11] = terminal2.estado
+            vector_resultado[12] = terminal2.tiempo_liberacion
+            vector_resultado[13] = terminal3.estado
+            vector_resultado[14] = terminal3.tiempo_liberacion
+            vector_resultado[15] = mozo.estado
+            vector_resultado[16] = mozo.fin_entrega
+            vector_resultado[17] = impresora.estado
+            vector_resultado[18] = impresora.fin_impresion
+            vector_resultado[19] = clientes_completados
+            vector_resultado[20] = ac_costo
+            vector_resultado[21] = promedio
+            for i in range(id_cliente):
+                vector_resultado[22 + (i * 4)] = clientes[i].estado
+                vector_resultado[23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
+                vector_resultado[24 + (i * 4)] = clientes[i].nro_terminal
+                vector_resultado[25 + (i * 4)] = clientes[i].tiempo_llegada
+
+        return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin], "clientes": clientes})
