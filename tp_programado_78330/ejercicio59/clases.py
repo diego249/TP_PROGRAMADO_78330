@@ -30,15 +30,18 @@ class Encargado:
         else:
             self.estado = "Libre"
 
-    def comenzar_asignacion(self):
+    def comenzar_asignacion(self, estado):
         if self.estado == "Libre" and (self.terminal1.estado == 'Libre' or self.terminal2.estado == 'Libre' or self.terminal3.estado == 'Libre'):
             self.disminuirdisponible()
             if self.cola_asig > 0:
                 self.cola_asig -= 1
             return True
         else:
-            self.cola_asig += 1
-            return False
+            if estado == 'EA':
+                return False
+            else:
+                self.cola_asig += 1
+                return False
 
     def asignar_terminal(self):
         if self.terminal1.estado == 'Libre':
@@ -158,14 +161,14 @@ class Cliente:
 
     def realizar_pedido(self):
         aleatorio = random.random()
-        if aleatorio < 0.01:
+        if aleatorio < 0.2:
             return True
         else:
             return False
 
     def buscar_impresion(self):
         aleatorio = random.random()
-        if aleatorio < 0.1:
+        if aleatorio < 0.9:
             return True
         else:
             return False
@@ -186,17 +189,29 @@ class Cliente:
 
             if self.estado == 'C':
                 self.tiempo_llegada = reloj
-            asignado = self.encargado.comenzar_asignacion()
-            if asignado:
-                self.estado = 'SA'
-                self.en_cola_asig = False
-                self.tiempo_asignacion = reloj + 0.33
-                self.encargado.fin_asignacion = self.tiempo_asignacion
-                return
-            else:
+
+            tiempo_asignacion2 = reloj + 0.33
+            if self.en_cola_asig == False and (tiempo_asignacion2 == self.encargado.terminal1.tiempo_liberacion or
+                tiempo_asignacion2 == self.encargado.terminal2.tiempo_liberacion or
+                tiempo_asignacion2 == self.encargado.terminal3.tiempo_liberacion):
                 self.estado = 'EA'
                 self.en_cola_asig = True
+                self.encargado.cola_asig += 1
+                tiempo_asignacion2 = ''
                 return
+
+            else:
+                asignado = self.encargado.comenzar_asignacion(self.estado)
+                if asignado:
+                    self.estado = 'SA'
+                    self.en_cola_asig = False
+                    self.tiempo_asignacion = reloj + 0.33
+                    self.encargado.fin_asignacion = self.tiempo_asignacion
+                    return
+                else:
+                    self.estado = 'EA'
+                    self.en_cola_asig = True
+                    return
 
         elif self.tiempo_asignacion == reloj and self.estado == 'SA':
             self.duracion_turno = self.definir_duracion()

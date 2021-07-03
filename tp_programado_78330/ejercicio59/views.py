@@ -35,6 +35,9 @@ class simulacion(generic.FormView):
 
         bandera = False
 
+        min1 = 100000
+        min2 = 0
+
         #servidores
         estados_encargado = ['Libre', 'Ocupado']
         estados_terminales = ['Libre', 'Disponible', 'Ocupado']
@@ -121,10 +124,10 @@ class simulacion(generic.FormView):
                 matriz[-1][23] = 0
                 for i in range(id_cliente):
                     matriz[-1][24 + (i * 5)] = clientes[i].estado
-                    matriz[-1][25 + (i * 5)] = clientes[i].gasto_individual
+                    matriz[-1][25 + (i * 5)] = '$' + str(clientes[i].gasto_individual)
                     matriz[-1][26 + (i * 5)] = clientes[i].nro_terminal
-                    matriz[-1][27 + (i * 5)] = clientes[i].tiempo_asignacion
-                    matriz[-1][28 + (i * 5)] = clientes[i].tiempo_fin_turno
+                    matriz[-1][27 + (i * 5)] = clientes[i].en_cola_asig
+                    matriz[-1][28 + (i * 5)] = clientes[i].tiempo_asignacion
 
                 vector_temporal = [''] * len(matriz[0])
                 matriz = np.vstack([matriz, vector_temporal])
@@ -143,7 +146,7 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_asignacion
-                        break
+
 
                 if cliente.tiempo_fin_turno != '':
                     if cliente.tiempo_fin_turno < temporal_tiempo and cliente.estado == "ET":
@@ -154,7 +157,7 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_fin_turno
-                        break
+
 
                 if cliente.tiempo_entrega_pedido != '':
                     if cliente.tiempo_entrega_pedido < temporal_tiempo and cliente.estado == "ET":
@@ -165,7 +168,7 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_entrega_pedido
-                        break
+
 
                 if cliente.tiempo_fin_impresion != '':
                     if cliente.tiempo_fin_impresion < temporal_tiempo and cliente.estado == "SI":
@@ -176,7 +179,7 @@ class simulacion(generic.FormView):
                         impresion_cliente = True
                         cobro_cliente = False
                         temporal_tiempo = cliente.tiempo_fin_impresion
-                        break
+
 
                 if cliente.tiempo_fin_cobro != '':
                     if cliente.tiempo_fin_cobro < temporal_tiempo and cliente.estado == "SC":
@@ -187,7 +190,7 @@ class simulacion(generic.FormView):
                         impresion_cliente = False
                         cobro_cliente = True
                         temporal_tiempo = cliente.tiempo_fin_cobro
-                        break
+
 
             reloj = temporal_tiempo
 
