@@ -15,8 +15,8 @@ class simulacion(generic.FormView):
     def form_valid(self, form):
         # parametros de entrada por form
         fin = form.cleaned_data['fin']
-        relojFin = form.cleaned_data['min_fin']
-        relojInicio = form.cleaned_data['min_inicio']
+        relojFin = fin
+        relojInicio = 0
 
         matriz = [[''] * 26 for f in range(1)]
         reloj = 0
@@ -211,27 +211,45 @@ class simulacion(generic.FormView):
             vector_resultado = [''] * len(matriz[0])
 
             vector_resultado[0] = evento
-            vector_resultado[1] = reloj
+            vector_resultado[1] = round(reloj, 4)
             vector_resultado[2] = proxima_llegada
-            vector_resultado[3] = encargado.fin_asignacion
+            if encargado.fin_asignacion != '':
+                vector_resultado[3] = round(encargado.fin_asignacion, 4)
+            else:
+                vector_resultado[3] = encargado.fin_asignacion
             vector_resultado[4] = encargado.estado
             vector_resultado[5] = encargado.cola
             vector_resultado[6] = encargado.cola_asig
             vector_resultado[7] = encargado.tiempo_turno
             vector_resultado[8] = encargado.importe
             vector_resultado[9] = terminal1.estado
-            vector_resultado[10] = terminal1.tiempo_liberacion
+            if terminal1.tiempo_liberacion != '':
+                vector_resultado[10] = round(terminal1.tiempo_liberacion, 4)
+            else:
+                vector_resultado[10] = terminal1.tiempo_liberacion
             vector_resultado[11] = terminal2.estado
-            vector_resultado[12] = terminal2.tiempo_liberacion
+            if terminal2.tiempo_liberacion != '':
+                vector_resultado[12] = round(terminal2.tiempo_liberacion, 4)
+            else:
+                vector_resultado[12] = terminal2.tiempo_liberacion
             vector_resultado[13] = terminal3.estado
-            vector_resultado[14] = terminal3.tiempo_liberacion
+            if terminal3.tiempo_liberacion != '':
+                vector_resultado[14] = round(terminal3.tiempo_liberacion, 4)
+            else:
+                vector_resultado[14] = terminal3.tiempo_liberacion
             vector_resultado[15] = mozo.estado
-            vector_resultado[16] = mozo.fin_entrega
+            if mozo.fin_entrega != '':
+                vector_resultado[16] = round(mozo.fin_entrega, 4)
+            else:
+                vector_resultado[16] = mozo.fin_entrega
             vector_resultado[17] = impresora.estado
-            vector_resultado[18] = impresora.fin_impresion
+            if impresora.fin_impresion != '':
+                vector_resultado[18] = round(impresora.fin_impresion, 4)
+            else:
+                vector_resultado[18] = impresora.fin_impresion
             vector_resultado[19] = clientes_completados
             vector_resultado[20] = ac_costo
-            vector_resultado[21] = promedio
+            vector_resultado[21] = round(promedio, 4)
             for i in range(id_cliente):
                 vector_resultado[22 + (i * 4)] = clientes[i].estado
                 vector_resultado[23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
