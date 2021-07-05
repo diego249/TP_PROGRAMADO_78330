@@ -152,6 +152,8 @@ class Cliente:
         self.tiempo_fin_cobro = ''
         self.en_cola = False
         self.en_cola_asig = False
+        self.en_cola_imp = False
+        self.en_cola_mozo = False
         self.pedido = False
         self.impresion = False
         self.encargado = encargado
@@ -184,11 +186,10 @@ class Cliente:
 
         if self.estado == 'C' or self.en_cola_asig:
 
-            self.encargado.tiempo_turno = ''
-            self.encargado.importe = ''
-
             if self.estado == 'C':
                 self.tiempo_llegada = reloj
+                self.encargado.tiempo_turno = ''
+                self.encargado.importe = ''
 
             tiempo_asignacion2 = reloj + 0.33
             if (tiempo_asignacion2 == self.encargado.terminal1.tiempo_liberacion or
@@ -243,6 +244,7 @@ class Cliente:
                     self.mozo.cola -= 1
             elif self.pedido and self.mozo.estado == 'Ocupado':
                 self.mozo.cola += 1
+                self.en_cola_mozo = True
             return
 
         elif self.tiempo_entrega_pedido == reloj:
@@ -259,20 +261,24 @@ class Cliente:
             self.terminal_asignada.tiempo_liberacion = ''
             self.tiempo_fin_turno = ''
 
-            self.impresion = self.buscar_impresion()
-            if self.impresion and self.impresora.estado == 'Libre':
-                self.impresora.disminuirdisponible()
-                self.gasto_individual += 0.5
-                self.tiempo_fin_impresion = reloj + 1
-                self.impresion = False
-                self.impresora.fin_impresion = self.tiempo_fin_impresion
-                self.estado = 'SI'
-                return
+            self.encargado.tiempo_turno = ''
+            self.encargado.importe = ''
 
-            elif self.impresion and self.impresora.estado == 'Ocupado':
-                self.impresora.cola += 1
-                self.estado = 'EI'
-                return
+            self.impresion = self.buscar_impresion()
+            if self.impresion:
+                self.gasto_individual += 0.5
+
+                paga = self.encargado.asignar_cobro()
+
+                if paga:
+                    self.estado = 'SC'
+                    self.tiempo_fin_cobro = reloj + 0.5
+                    self.en_cola = False
+                    return
+                else:
+                    self.estado = 'EC'
+                    self.en_cola = True
+                    return
 
             elif not self.impresion:
                 paga = self.encargado.asignar_cobro()
@@ -287,43 +293,102 @@ class Cliente:
                     self.en_cola = True
                     return
 
+            #if self.impresion and self.impresora.estado == 'Libre':
+            #    self.impresora.disminuirdisponible()
+            #    self.gasto_individual += 0.5
+            #    self.tiempo_fin_impresion = reloj + 1
+            #    self.impresion = False
+            #    self.impresora.fin_impresion = self.tiempo_fin_impresion
+            #    self.estado = 'SI'
+            #    return
+            #elif self.impresion and self.impresora.estado == 'Ocupado':
+            #    self.impresora.cola += 1
+            #    self.estado = 'EI'
+            #    return
+
         elif self.tiempo_fin_impresion == reloj:
             self.impresora.aumentardisponible()
             self.impresora.fin_impresion = ''
             self.tiempo_fin_impresion = ''
             self.encargado.tiempo_turno = ''
             self.encargado.importe = ''
+            if self.impresora.cola > 0:
+                self.impresora.cola -= 1
+            self.estado = 'D'
 
-            paga = self.encargado.asignar_cobro()
-
-            if paga:
-                self.tiempo_fin_cobro = reloj + 0.5
-                self.estado = 'SC'
-                self.en_cola = False
-                return
-            else:
-                self.estado = 'EC'
-                self.en_cola = True
-                return
+            #paga = self.encargado.asignar_cobro()
+            #if paga:
+            #    self.tiempo_fin_cobro = reloj + 0.5
+            #    self.estado = 'SC'
+            #    self.en_cola = False
+            #    return
+            #else:
+            #    self.estado = 'EC'
+            #    self.en_cola = True
+            #    return
 
         elif self.tiempo_fin_cobro == reloj:
             self.encargado.aumentardisponible()
             self.encargado.fin_cobro = ''
             self.tiempo_fin_cobro = ''
-            self.estado = 'D'
+
+            if self.impresion and self.impresora.estado == 'Libre':
+                self.impresora.disminuirdisponible()
+                self.tiempo_fin_impresion = reloj + 1
+                self.impresion = False
+                self.impresora.fin_impresion = self.tiempo_fin_impresion
+                self.estado = 'SI'
+                return
+            elif self.impresion and self.impresora.estado == 'Ocupado':
+                self.impresora.cola += 1
+                self.en_cola_imp = True
+                self.estado = 'EI'
+                return
+
+            elif not self.impresion:
+                self.estado = 'D'
             return
 
-        if self.en_cola:
-            paga = self.encargado.asignar_cobro()
+        if self.estado != 'D':
+            if self.en_cola:
+                paga = self.encargado.asignar_cobro()
 
-            if paga:
-                self.tiempo_fin_cobro = reloj + 0.5
-                self.estado = 'SC'
-                self.en_cola = False
-                return
-            else:
-                self.estado = 'EC'
-                self.en_cola = True
+                if paga:
+                    self.tiempo_fin_cobro = reloj + 0.5
+                    self.estado = 'SC'
+                    self.en_cola = False
+                    return
+                else:
+                    self.estado = 'EC'
+                    self.en_cola = True
+                    return
+
+            if self.en_cola_imp:
+                if self.impresora.estado == 'Libre':
+                    self.impresora.disminuirdisponible()
+                    self.tiempo_fin_impresion = reloj + 1
+                    self.impresion = False
+                    self.impresora.fin_impresion = self.tiempo_fin_impresion
+                    self.estado = 'SI'
+                    self.en_cola_imp = False
+                    return
+                elif self.impresora.estado == 'Ocupado':
+                    self.en_cola_imp = True
+                    self.estado = 'EI'
+                    return
+
+            if self.en_cola_mozo:
+                if self.mozo.estado == 'Libre':
+                    self.mozo.disminuirdisponible()
+                    self.gasto_individual += 2
+                    self.tiempo_entrega_pedido = reloj + 3
+                    self.pedido = False
+                    self.mozo.fin_entrega = self.tiempo_entrega_pedido
+                    self.en_cola_mozo = False
+                    if self.mozo.cola > 0:
+                        self.mozo.cola -= 1
+                elif self.mozo.estado == 'Ocupado':
+                    self.en_cola_mozo = True
                 return
 
 

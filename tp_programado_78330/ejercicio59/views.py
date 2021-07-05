@@ -18,7 +18,7 @@ class simulacion(generic.FormView):
         relojFin = fin
         relojInicio = 0
 
-        matriz = [[''] * 26 for f in range(1)]
+        matriz = [[''] * 28 for f in range(1)]
         reloj = 0
         proxima_llegada = 0
         eventos = ["Inicialización", "Llegada Cliente", "Fin Asignacion", "Fin Entrega Pedido", "Fin Turno", "Fin Impresion", "Fin Cobro"]
@@ -128,23 +128,25 @@ class simulacion(generic.FormView):
                 else:
                     matriz[-1][14] = terminal3.tiempo_liberacion
                 matriz[-1][15] = mozo.estado
+                matriz[-1][16] = mozo.cola
                 if mozo.fin_entrega != '':
-                    matriz[-1][16] = round(mozo.fin_entrega, 4)
+                    matriz[-1][17] = round(mozo.fin_entrega, 4)
                 else:
-                    matriz[-1][16] = mozo.fin_entrega
-                matriz[-1][17] = impresora.estado
+                    matriz[-1][17] = mozo.fin_entrega
+                matriz[-1][18] = impresora.estado
+                matriz[-1][19] = impresora.cola
                 if impresora.fin_impresion != '':
-                    matriz[-1][18] = round(impresora.fin_impresion, 4)
+                    matriz[-1][20] = round(impresora.fin_impresion, 4)
                 else:
-                    matriz[-1][18] = impresora.fin_impresion
-                matriz[-1][19] = clientes_completados
-                matriz[-1][20] = ac_costo
-                matriz[-1][21] = round(promedio, 4)
+                    matriz[-1][20] = impresora.fin_impresion
+                matriz[-1][21] = clientes_completados
+                matriz[-1][22] = ac_costo
+                matriz[-1][23] = round(promedio, 4)
                 for i in range(id_cliente):
-                    matriz[-1][22 + (i * 4)] = clientes[i].estado
-                    matriz[-1][23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
-                    matriz[-1][24 + (i * 4)] = clientes[i].nro_terminal
-                    matriz[-1][25 + (i * 4)] = clientes[i].tiempo_llegada
+                    matriz[-1][24 + (i * 4)] = clientes[i].estado
+                    matriz[-1][25 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
+                    matriz[-1][26 + (i * 4)] = clientes[i].nro_terminal
+                    matriz[-1][27 + (i * 4)] = clientes[i].tiempo_llegada
                     #matriz[-1][26 + (i * 5)] = clientes[i].tiempo_llegada
 
                 vector_temporal = [''] * len(matriz[0])
@@ -206,7 +208,7 @@ class simulacion(generic.FormView):
                         temporal_tiempo = cliente.tiempo_fin_cobro
                         ac_costo += cliente.gasto_individual
 
-            reloj = temporal_tiempo
+
 
             vector_resultado = [''] * len(matriz[0])
 
@@ -238,22 +240,26 @@ class simulacion(generic.FormView):
             else:
                 vector_resultado[14] = terminal3.tiempo_liberacion
             vector_resultado[15] = mozo.estado
+            vector_resultado[16] = mozo.cola
             if mozo.fin_entrega != '':
-                vector_resultado[16] = round(mozo.fin_entrega, 4)
+                vector_resultado[17] = round(mozo.fin_entrega, 4)
             else:
-                vector_resultado[16] = mozo.fin_entrega
-            vector_resultado[17] = impresora.estado
+                vector_resultado[17] = mozo.fin_entrega
+            vector_resultado[18] = impresora.estado
+            vector_resultado[19] = impresora.cola
             if impresora.fin_impresion != '':
-                vector_resultado[18] = round(impresora.fin_impresion, 4)
+                vector_resultado[20] = round(impresora.fin_impresion, 4)
             else:
-                vector_resultado[18] = impresora.fin_impresion
-            vector_resultado[19] = clientes_completados
-            vector_resultado[20] = ac_costo
-            vector_resultado[21] = round(promedio, 4)
+                vector_resultado[20] = impresora.fin_impresion
+            vector_resultado[21] = clientes_completados
+            vector_resultado[22] = ac_costo
+            vector_resultado[23] = round(promedio, 4)
             for i in range(id_cliente):
-                vector_resultado[22 + (i * 4)] = clientes[i].estado
-                vector_resultado[23 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
-                vector_resultado[24 + (i * 4)] = clientes[i].nro_terminal
-                vector_resultado[25 + (i * 4)] = clientes[i].tiempo_llegada
+                vector_resultado[24 + (i * 4)] = clientes[i].estado
+                vector_resultado[25 + (i * 4)] = '$' + str(clientes[i].gasto_individual)
+                vector_resultado[26 + (i * 4)] = clientes[i].nro_terminal
+                vector_resultado[27 + (i * 4)] = clientes[i].tiempo_llegada
+
+            reloj = temporal_tiempo
 
         return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin], "clientes": clientes})
