@@ -15,8 +15,8 @@ class simulacion(generic.FormView):
     def form_valid(self, form):
         # parametros de entrada por form
         fin = form.cleaned_data['fin']
-        relojFin = fin
-        relojInicio = 0
+        relojFin = form.cleaned_data['minuto_fin']
+        relojInicio = form.cleaned_data['minuto_inicio']
 
         matriz = [[''] * 28 for f in range(1)]
         reloj = 0
@@ -53,6 +53,35 @@ class simulacion(generic.FormView):
         ac_costo = 0
         promedio = 0
 
+        if reloj == 0 and relojInicio > 0:
+            matriz[0][0] = eventos[0]
+            matriz[0][1] = round(reloj, 4)
+            matriz[0][2] = proxima_llegada
+            matriz[0][3] = encargado.fin_asignacion
+            matriz[0][4] = encargado.estado
+            matriz[0][5] = encargado.cola
+            matriz[0][6] = encargado.cola_asig
+            matriz[0][7] = encargado.tiempo_turno
+            matriz[0][8] = encargado.importe
+            matriz[0][9] = terminal1.estado
+            matriz[0][10] = terminal1.tiempo_liberacion
+            matriz[0][11] = terminal2.estado
+            matriz[0][12] = terminal2.tiempo_liberacion
+            matriz[0][13] = terminal3.estado
+            matriz[0][14] = terminal3.tiempo_liberacion
+            matriz[0][15] = mozo.estado
+            matriz[0][16] = mozo.cola
+            matriz[0][17] = mozo.fin_entrega
+            matriz[0][18] = impresora.estado
+            matriz[0][19] = impresora.cola
+            matriz[0][20] = impresora.fin_impresion
+            matriz[0][21] = clientes_completados
+            matriz[0][22] = ac_costo
+            matriz[0][23] = round(promedio, 4)
+            matriz[0][24] = ''
+            matriz[0][25] = ''
+            matriz[0][26] = ''
+            matriz[0][27] = ''
 
         while reloj <= fin:
 
@@ -263,4 +292,4 @@ class simulacion(generic.FormView):
             reloj = temporal_tiempo
             resultado = vector_resultado[23]
 
-        return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, resultado], "clientes": clientes})
+        return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin, resultado], "clientes": clientes})
