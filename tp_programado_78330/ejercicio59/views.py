@@ -261,5 +261,6 @@ class simulacion(generic.FormView):
                 vector_resultado[27 + (i * 4)] = clientes[i].tiempo_llegada
 
             reloj = temporal_tiempo
+            resultado = vector_resultado[23]
 
-        return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, relojInicio, relojFin], "clientes": clientes})
+        return render(self.request, self.template_name, {"vectorResultado": vector_resultado, "matrizResultado": matriz, "vectorEntrada": [fin, resultado], "clientes": clientes})
